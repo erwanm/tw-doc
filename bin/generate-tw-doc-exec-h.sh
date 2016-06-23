@@ -6,6 +6,7 @@
 progName="generate-tw-doc-exec-h.sh"
 
 wikiName="tw-doc-tmp-node-wiki"
+tags=""
 
 function usage {
   echo
@@ -20,6 +21,7 @@ function usage {
   echo
   echo "  Options:"
   echo "    -h this help"
+  echo "    -t <tags> tags to be added to every generated tiddler (TW syntax)"
   echo
 }
 
@@ -32,8 +34,9 @@ function writeCreatedTodayField {
 
 
 OPTIND=1
-while getopts 'h' option ; do
+while getopts 'ht:' option ; do
     case $option in
+	"t" ) tags="$OPTARG";;
         "h" ) usage
               exit 0;;
         "?" )
@@ -67,6 +70,7 @@ while read executableFile; do
     targetTiddler="$workDir/$wikiName/tiddlers/$tiddlerName.tid"
     writeCreatedTodayField >"$targetTiddler"
     echo "title: $tiddlerName" >>"$targetTiddler"
+    echo "tags: $tags"
     echo "type: text/plain" >>"$targetTiddler"
     echo ""  >>"$targetTiddler"
     eval "$executableFile -h" >> "$targetTiddler"
