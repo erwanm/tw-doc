@@ -1,0 +1,28 @@
+#twdoc
+# This is super interersting stuff
+#/twdoc
+#
+
+
+
+#
+#
+#twdoc substuff(foo, bar)
+#
+# this is my function with my args foo and bar
+#
+#/twdoc
+
+
+
+#twdoc subdummy
+#
+# oh another tiddler for this thingie.
+#/twdoc
+#
+
+#twdoc
+#
+# this goes to the main intersting stuff too.
+#
+#/twdoc

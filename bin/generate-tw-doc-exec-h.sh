@@ -70,7 +70,7 @@ while read executableFile; do
     targetTiddler="$workDir/$wikiName/tiddlers/$tiddlerName.tid"
     writeCreatedTodayField >"$targetTiddler"
     echo "title: $tiddlerName" >>"$targetTiddler"
-    echo "tags: $tags"
+    echo "tags: $tags" >>"$targetTiddler"
     echo "type: text/plain" >>"$targetTiddler"
     echo ""  >>"$targetTiddler"
     eval "$executableFile -h" >> "$targetTiddler"
