@@ -74,7 +74,7 @@ function extractTWDocFromLib {
 	    if [ $inside -eq 1 ]; then
 #		echo "DEBUG adding '${line#$prefix}' to $currentDest"
 #		echo "DEBUG {line#$linePrefix}=${line#$linePrefix}"
-		echo "${line#$linePrefix}" >>"$currentDest"
+		echo "${line#$linePrefix}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' >>"$currentDest"
 	    fi
 	fi
 	lineNo=$(( $lineNo + 1 ))

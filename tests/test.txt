@@ -11,6 +11,9 @@
 #
 # this is my function with my args foo and bar
 #
+# * oh, a list
+# * with an item
+# * and another one
 #/twdoc
 
 
