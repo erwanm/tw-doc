@@ -11,6 +11,8 @@ twDocEnd="#/twdoc"
 
 wikiName="tw-doc-tmp-node-wiki"
 tags=""
+removePathPrefix=""
+
 
 function usage {
   echo
@@ -28,13 +30,16 @@ function usage {
   echo "    -t <tags> tags to be added to every generated tiddler (TW syntax)"
   echo "    -p <line prefix> line prefix for comments where twdoc can be found"
   echo "       default: '$linePrefix'"
+  echo "    -r <path prefix> remove this prefix from the filename before using"
+  echo "       using as title."
   echo
 }
 
 
 function extractTWDocFromLib {
     libName="$1"
-    libTiddlerFile="$2"
+    tiddlerName="$2"
+    libTiddlerFile="$3"
 
  #   echo "DEBUG libName='$libName' ; libTiddlerFile='$libTiddlerFile'" 1>&2
     path=$(dirname "$libTiddlerFile")
@@ -53,11 +58,11 @@ function extractTWDocFromLib {
 	    possibleTitle=${line:${#twDocStart}}
 	    if [ ! -z "$possibleTitle" ]; then
 		possibleTitle=$(echo "$possibleTitle" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-		currentDest="$path/$(echo "${libName}_$possibleTitle" | tr '/' '_').tid"
-#		echo "DEBUG START SUB; currentDest='$currentDest'" 1>&2
+		currentDest="$path/$(echo "${tiddlerName}_$possibleTitle" | tr '/' '_').tid"
+		echo "DEBUG START SUB; currentDest='$currentDest'" 1>&2
 		writeCreatedTodayField >"$currentDest"
-		echo "title: ${libName}/$possibleTitle" >>"$currentDest"
-		echo "tags: [[$libName]]" >>"$currentDest"
+		echo "title: ${tiddlerName}/$possibleTitle" >>"$currentDest"
+		echo "tags: [[$tiddlerName]]" >>"$currentDest"
 		echo "type: text/vnd.tiddlywiki" >>"$currentDest"
 		echo ""  >>"$currentDest"
 		
@@ -92,10 +97,11 @@ function writeCreatedTodayField {
 
 
 OPTIND=1
-while getopts 'ht:p:' option ; do
+while getopts 'ht:p:r:' option ; do
     case $option in
 	"t" ) tags="$OPTARG";;
 	"p" ) linePrefix="$OPTARG";;
+	"r" ) removePathPrefix="$OPTARG";;
         "h" ) usage
               exit 0;;
         "?" )
@@ -125,15 +131,16 @@ tiddlywiki "$wikiName" --load $(basename "$htmlWikiFile") >/dev/null # convert s
 popd >/dev/null
 
 while read libFile; do
-    tiddlerName="$libFile"
+    tiddlerName="${libFile#$removePathPrefix}"
     tiddlerFile=$(echo "$tiddlerName" | tr '/' '_')
     targetTiddler="$workDir/$wikiName/tiddlers/$tiddlerFile.tid"
+    echo "DEBUG tiddlerName=$tiddlerName; tiddlerFile=$tiddlerFile; targetTiddler=$targetTiddler" 1>&2
     writeCreatedTodayField >"$targetTiddler"
     echo "title: $tiddlerName" >>"$targetTiddler"
     echo "tags: $tags" >>"$targetTiddler"
     echo "type: text/vnd.tiddlywiki" >>"$targetTiddler"
     echo ""  >>"$targetTiddler"
-    cat "$libFile" | extractTWDocFromLib "$libFile" "$targetTiddler"
+    cat "$libFile" | extractTWDocFromLib "$libFile" "$tiddlerName" "$targetTiddler"
 done
 
 pushd "$workDir" >/dev/null
@@ -148,4 +155,4 @@ else
     echo "An error happened, no result wiki file '$resHtmlFile' found." 1>&2
     exit 2
 fi
-rm -rf "$workDir"
+#rm -rf "$workDir"

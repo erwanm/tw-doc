@@ -149,6 +149,12 @@ Error message and password prompt
 
 <li>clg-authorship-analytics</li>
 
+<li>CLGAuthorshipAnalytics/Verification/Basic.pm</li>
+
+<li>CLGAuthorshipAnalytics/Verification/Basic.pm/compute($self, $probeDocsLists)</li>
+
+<li>CLGAuthorshipAnalytics/Verification/Basic.pm/new($class, $params)</li>
+
 <li>Documentation in progress...</li>
 
 <li>generate-multi-conf.sh</li>
@@ -176,18 +182,6 @@ Error message and password prompt
 <li>stop-criterion.pl</li>
 
 <li>Table of Contents</li>
-
-<li>test.txt</li>
-
-<li>test.txt/subdummy</li>
-
-<li>test.txt/substuff(foo, bar)</li>
-
-<li>tests/test.txt</li>
-
-<li>tests/test.txt/subdummy</li>
-
-<li>tests/test.txt/substuff(foo, bar)</li>
 
 <li>train-cv.sh</li>
 
@@ -6559,6 +6553,32 @@ See [[Genetic process]], [[Meta-classifier]]
 
 </pre>
 </div>
+<div created="20160626172150000" tags="Strategy" title="CLGAuthorshipAnalytics/Verification/Basic.pm" type="text/vnd.tiddlywiki" revision="0" bag="default">
+<pre>
+&quot;Basic&quot; verification strategy: simply computes the similarity between two documents according to a sim measure, for a set of observation types.
+EM December 2015
+
+</pre>
+</div>
+<div created="20160626172150000" tags="CLGAuthorshipAnalytics/Verification/Basic.pm" title="CLGAuthorshipAnalytics/Verification/Basic.pm/compute($self, $probeDocsLists)" type="text/vnd.tiddlywiki" revision="0" bag="default">
+<pre>
+see parent.
+
+* $probeDocsLists: [ [docA1, docA2, ...] ,  [docB1, docB2,...] ]
+** where docX = DocProvider
+</pre>
+</div>
+<div created="20160626172150000" tags="CLGAuthorshipAnalytics/Verification/Basic.pm" title="CLGAuthorshipAnalytics/Verification/Basic.pm/new($class, $params)" type="text/vnd.tiddlywiki" revision="0" bag="default">
+<pre>
+$params:
+
+* logging
+* obsTypesList
+* simMeasure:  a CLGTextTools::Measure object (initialized) (default minMax)
+* multipleProbeAggregate: random,  median, arithm, geom, harmo. If there are more than one probe doc on either side (or both), specifies which method should be used to aggregate the similarity scores. If &quot;random&quot; (default), then a default doc is picked among the list (disadvantage: same input can give different results). Otherwise the similarity is computed between all pairs (cartesian product NxM), and the values are aggregated according to the parameter (disadvantage: NxM longer).
+
+</pre>
+</div>
 <div created="20160522173938450" modified="20160522174243840" tags="$:/tags/AboveStory" title="Documentation in progress..." revision="0" bag="default">
 <pre>@@color:red;
 This documentation is a work in progress...
@@ -6767,45 +6787,6 @@ OPTIONS:
 &lt;&lt;toc-selective-expandable 'Table of Contents'&gt;&gt;
 
 &lt;/div&gt;
-</pre>
-</div>
-<div created="20160624210644000" tags="" title="test.txt" type="text/vnd.tiddlywiki" revision="0" bag="default">
-<pre> This is super interersting stuff
-
- this goes to the main intersting stuff too.
-
-</pre>
-</div>
-<div created="20160624210644000" tags="test.txt" title="test.txt/subdummy" type="text/vnd.tiddlywiki" revision="0" bag="default">
-<pre>
- oh another tiddler for this thingie.
-</pre>
-</div>
-<div created="20160624210422000" tags="test.txt" title="test.txt/substuff(foo, bar)" type="text/vnd.tiddlywiki" revision="0" bag="default">
-<pre>
- this is my function with my args foo and bar
-
-</pre>
-</div>
-<div created="20160625192307000" tags="" title="tests/test.txt" type="text/vnd.tiddlywiki" revision="0" bag="default">
-<pre>This is super interersting stuff
-
-this goes to the main intersting stuff too.
-
-</pre>
-</div>
-<div created="20160625192307000" tags="tests/test.txt" title="tests/test.txt/subdummy" type="text/vnd.tiddlywiki" revision="0" bag="default">
-<pre>
-oh another tiddler for this thingie.
-</pre>
-</div>
-<div created="20160625192146000" tags="tests/test.txt" title="tests/test.txt/substuff(foo, bar)" type="text/vnd.tiddlywiki" revision="0" bag="default">
-<pre>
-this is my function with my args foo and bar
-
-* oh, a list
-* with an item
-* and another one
 </pre>
 </div>
 <div created="20160623190537000" tags="Scripts" title="train-cv.sh" type="text/plain" revision="0" bag="default">
