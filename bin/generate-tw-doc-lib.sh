@@ -58,8 +58,8 @@ function extractTWDocFromLib {
 	    possibleTitle=${line:${#twDocStart}}
 	    if [ ! -z "$possibleTitle" ]; then
 		possibleTitle=$(echo "$possibleTitle" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-		currentDest="$path/$(echo "${tiddlerName}_$possibleTitle" | tr '/' '_').tid"
-		echo "DEBUG START SUB; currentDest='$currentDest'" 1>&2
+		currentDest="$path/$(echo "${tiddlerName}_$possibleTitle" | tr '/' '_' | tr ' ' '_').tid"
+#		echo "DEBUG START SUB; currentDest='$currentDest'" 1>&2
 		writeCreatedTodayField >"$currentDest"
 		echo "title: ${tiddlerName}/$possibleTitle" >>"$currentDest"
 		echo "tags: [[$tiddlerName]]" >>"$currentDest"
@@ -134,7 +134,7 @@ while read libFile; do
     tiddlerName="${libFile#$removePathPrefix}"
     tiddlerFile=$(echo "$tiddlerName" | tr '/' '_')
     targetTiddler="$workDir/$wikiName/tiddlers/$tiddlerFile.tid"
-    echo "DEBUG tiddlerName=$tiddlerName; tiddlerFile=$tiddlerFile; targetTiddler=$targetTiddler" 1>&2
+#    echo "DEBUG tiddlerName=$tiddlerName; tiddlerFile=$tiddlerFile; targetTiddler=$targetTiddler" 1>&2
     writeCreatedTodayField >"$targetTiddler"
     echo "title: $tiddlerName" >>"$targetTiddler"
     echo "tags: $tags" >>"$targetTiddler"
@@ -155,4 +155,4 @@ else
     echo "An error happened, no result wiki file '$resHtmlFile' found." 1>&2
     exit 2
 fi
-#rm -rf "$workDir"
+rm -rf "$workDir"
