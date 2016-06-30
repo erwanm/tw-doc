@@ -58,7 +58,7 @@ function extractTWDocFromLib {
 	    possibleTitle=${line:${#twDocStart}}
 	    if [ ! -z "$possibleTitle" ]; then
 		possibleTitle=$(echo "$possibleTitle" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-		currentDest="$path/$(echo "${tiddlerName}_$possibleTitle" | tr '/' '_' | tr ' ' '_').tid"
+		currentDest="$path/$(echo "${tiddlerName}_$possibleTitle" | tr '/' '_' | tr ' ' '_' | tr '?' '_' ).tid"
 #		echo "DEBUG START SUB; currentDest='$currentDest'" 1>&2
 		writeCreatedTodayField >"$currentDest"
 		echo "title: ${tiddlerName}/$possibleTitle" >>"$currentDest"
