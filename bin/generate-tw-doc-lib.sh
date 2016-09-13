@@ -1,7 +1,19 @@
 #!/bin/bash
 
-#source common-lib.sh
-#source file-lib.sh
+#twdoc
+#
+# This tool generates tiddlers containing some comments read from some library files.
+#
+# The present file is not a library but is used as an example: this paragraph appears
+# between markers ``twdoc ... /twdoc``, so it will be included in the general tiddler
+# about this file. Similarly, a few ``twdoc ... /twdoc`` blocks are used to describe
+# the functions below and each will be included in a different tiddler.
+#
+# See also [[DocGenerationCommand]].
+#
+# EM Sept 2016
+#
+#/twdoc
 
 progName="generate-tw-doc-lib.sh"
 
@@ -9,21 +21,29 @@ linePrefix="\#"
 twDocStart="#twdoc"
 twDocEnd="#/twdoc"
 
+debug=0
+
 wikiName="tw-doc-tmp-node-wiki"
 tags=""
 removePathPrefix=""
+tiddlerPrefix=""
 
-
+#twdoc usage
+#
+# Prints the usual help message.
+#
+#/twdoc
 function usage {
   echo
   echo "Usage: $progName [options] <html wiki file> "
   echo
-  echo "  Generates the 'tiddlers' containing some executable scripts help"
-  echo "  messages and adds/updates this content in the documentation wiki"
+  echo "  Generates the 'tiddlers' containing specific parts of some text"
+  echo "  files, marked 'twdoc ... /twdoc'. Intended to generate documentation"
+  echo "  about the functions inside the source code of a library (in a "
+  echo "  vaguely similar way as javadoc, for example)."
+  echo "  Then adds/updates this content in the documentation wiki"
   echo "  supplied as parameter."
-  echo "  The list of executable files for which the help message should"
-  echo "  be printed is read from STDIN."
-  echo
+  echo "  The list of source files (e.g. libraries) is read from STDIN."
   echo
   echo "  Options:"
   echo "    -h this help"
@@ -31,17 +51,31 @@ function usage {
   echo "    -p <line prefix> line prefix for comments where twdoc can be found"
   echo "       default: '$linePrefix'"
   echo "    -r <path prefix> remove this prefix from the filename before using"
-  echo "       using as title."
+  echo "       it as title."
+  echo "    -n <tiddler name prefix> add this prefix to every tiddler title."
+  echo "    -d debug mode, don't delete the working directory."
   echo
 }
 
 
+#twdoc extractTWDocFromLib $tiddlerName $libTiddlerFile
+#
+# Extracts all the content from a library file read from STDIN, and writes the
+# corresponding tiddlers.
+#
+# * ``$tiddlerName`` is the name of the main tiddler, where ``twdoc`` comments without any specific title are written.
+# * ``$libTiddlerFile`` is the filename of the main tiddler.
+# 
+# each ``twdoc`` comment with a title is written to a specific tiddler with
+# this title, prefixed by the main tiddler name and tagged with the main
+# tiddler.
+#
+#/twdoc
+#
 function extractTWDocFromLib {
-    libName="$1"
-    tiddlerName="$2"
-    libTiddlerFile="$3"
+    tiddlerName="$1"
+    libTiddlerFile="$2"
 
- #   echo "DEBUG libName='$libName' ; libTiddlerFile='$libTiddlerFile'" 1>&2
     path=$(dirname "$libTiddlerFile")
 
     currentDest=""
@@ -89,6 +123,12 @@ function extractTWDocFromLib {
     fi
 }
 
+
+#twdoc writeCreatedTodayField
+#
+# Prints the current date/time in TW format.
+#
+#/twdoc
 function writeCreatedTodayField {
     theDate=$(date +"%Y%m%d%H%M%S")
     echo "created: ${theDate}000"
@@ -97,11 +137,13 @@ function writeCreatedTodayField {
 
 
 OPTIND=1
-while getopts 'ht:p:r:' option ; do
+while getopts 'ht:p:r:dn:' option ; do
     case $option in
 	"t" ) tags="$OPTARG";;
 	"p" ) linePrefix="$OPTARG";;
 	"r" ) removePathPrefix="$OPTARG";;
+	"n" ) tiddlerPrefix="$OPTARG";;
+	"d" ) debug=1;;
         "h" ) usage
               exit 0;;
         "?" )
@@ -122,7 +164,6 @@ fi
 htmlWikiFile="$1"
 
 workDir=$(mktemp -d)
-echo "DEBUG: workDir = $workDir"  1>&2
 
 cp "$htmlWikiFile" "$workDir"
 pushd "$workDir" >/dev/null
@@ -131,7 +172,8 @@ tiddlywiki "$wikiName" --load $(basename "$htmlWikiFile") >/dev/null # convert s
 popd >/dev/null
 
 while read libFile; do
-    tiddlerName="${libFile#$removePathPrefix}"
+    tiddlerName="${tiddlerPrefix}${libFile#$removePathPrefix}"
+#    echo "DEBUG: libFile='$libFile', removePathPrefix='$removePathPrefix', tiddlerName='$tiddlerName'" 1>&2
     tiddlerFile=$(echo "$tiddlerName" | tr '/' '_')
     targetTiddler="$workDir/$wikiName/tiddlers/$tiddlerFile.tid"
 #    echo "DEBUG tiddlerName=$tiddlerName; tiddlerFile=$tiddlerFile; targetTiddler=$targetTiddler" 1>&2
@@ -140,7 +182,7 @@ while read libFile; do
     echo "tags: $tags" >>"$targetTiddler"
     echo "type: text/vnd.tiddlywiki" >>"$targetTiddler"
     echo ""  >>"$targetTiddler"
-    cat "$libFile" | extractTWDocFromLib "$libFile" "$tiddlerName" "$targetTiddler"
+    cat "$libFile" | extractTWDocFromLib "$tiddlerName" "$targetTiddler"
 done
 
 pushd "$workDir" >/dev/null
@@ -155,4 +197,9 @@ else
     echo "An error happened, no result wiki file '$resHtmlFile' found." 1>&2
     exit 2
 fi
-rm -rf "$workDir"
+
+if [ $debug -eq 0 ]; then
+    rm -rf "$workDir"
+else
+    echo "DEBUG MODE: working directory '$workDir' not deleted."  1>&2
+fi

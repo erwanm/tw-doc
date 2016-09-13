@@ -7,6 +7,7 @@ progName="generate-tw-doc-exec-h.sh"
 
 wikiName="tw-doc-tmp-node-wiki"
 tags=""
+debug=0
 
 function usage {
   echo
@@ -34,9 +35,10 @@ function writeCreatedTodayField {
 
 
 OPTIND=1
-while getopts 'ht:' option ; do
+while getopts 'ht:d' option ; do
     case $option in
 	"t" ) tags="$OPTARG";;
+	"d" ) debug=1;;
         "h" ) usage
               exit 0;;
         "?" )
@@ -57,7 +59,6 @@ fi
 htmlWikiFile="$1"
 
 workDir=$(mktemp -d)
-echo "DEBUG: workDir = $workDir"  1>&2
 
 cp "$htmlWikiFile" "$workDir"
 pushd "$workDir" >/dev/null
@@ -88,4 +89,9 @@ else
     echo "An error happened, no result wiki file '$resHtmlFile' found." 1>&2
     exit 2
 fi
-rm -rf "$workDir"
+
+if [ $debug -eq 0 ]; then
+    rm -rf "$workDir"
+else
+    echo "DEBUG MODE: working directory '$workDir' not deleted."  1>&2
+fi
