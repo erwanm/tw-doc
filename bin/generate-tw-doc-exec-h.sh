@@ -68,7 +68,7 @@ popd >/dev/null
 
 while read executableFile; do
     tiddlerName=$(basename "$executableFile")
-    targetTiddler="$workDir/$wikiName/tiddlers/$tiddlerName.tid"
+    targetTiddler="$workDir/$wikiName/tiddlers/$tiddlerName.txt.tid"
     writeCreatedTodayField >"$targetTiddler"
     echo "title: $tiddlerName" >>"$targetTiddler"
     echo "tags: $tags" >>"$targetTiddler"
