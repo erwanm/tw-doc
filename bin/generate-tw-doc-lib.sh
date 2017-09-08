@@ -175,6 +175,7 @@ while read libFile; do
     tiddlerName="${tiddlerPrefix}${libFile#$removePathPrefix}"
 #    echo "DEBUG: libFile='$libFile', removePathPrefix='$removePathPrefix', tiddlerName='$tiddlerName'" 1>&2
     tiddlerFile=$(echo "$tiddlerName" | tr '/' '_')
+    rm -f "$workDir/$wikiName/tiddlers"/$tiddlerFile.* # to overwrite any previous version with .txt and .meta (don't completely understand this new stuff in TW 5.1.14)
     targetTiddler="$workDir/$wikiName/tiddlers/$tiddlerFile.tid"
 #    echo "DEBUG tiddlerName=$tiddlerName; tiddlerFile=$tiddlerFile; targetTiddler=$targetTiddler" 1>&2
     writeCreatedTodayField >"$targetTiddler"

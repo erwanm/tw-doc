@@ -68,6 +68,7 @@ popd >/dev/null
 
 while read executableFile; do
     tiddlerName=$(basename "$executableFile")
+    rm -f "$workDir/$wikiName/tiddlers"/$tiddlerName.* # to overwrite any previous version with .txt and .meta (don't completely understand this new stuff in TW 5.1.14)
     targetTiddler="$workDir/$wikiName/tiddlers/$tiddlerName.txt.tid"
     writeCreatedTodayField >"$targetTiddler"
     echo "title: $tiddlerName" >>"$targetTiddler"
